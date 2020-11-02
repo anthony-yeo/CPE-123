@@ -1,6 +1,7 @@
 //global variables
-
-var start = -30;
+var start = 430;
+var sorcererStart = 19;
+var count =  0;
 
 var indWidth; // individual width for each drawing
 // x,y,scale, and rotation variables for the Sorcerer
@@ -9,28 +10,44 @@ var yTransSor;
 var resize;
 var rot;
 
-// variable for the person in the middle
-var personMove;
-
+//Changes the scene
 var scene;
 
+//Arrays for scene2
 var bldgColor = [];
 var bldgX = [];
 var bldgY = [];
 var lightsOn = [];
 
+//Animating the kid
 var distance;
 var kidY;
+
+//Animating the sorcerer
+var sorcererY;
+var sorcererFeet;
+var step;
+
 function setup() 
 {	
 	createCanvas(400, 400);
 	scene = 1;
 	distance = 15;
 	kidY = 250;
+	sorcererY = 300;
+	sorcererFeet = 75;
+	step = 75;
 
 	indWidth=400;
 
 	//scene 2
+	bldgArrays();
+	
+}
+
+//Filling the scene2 arrays
+function bldgArrays(){
+	background(0);
 	for(var x = 0; x < 400; x += 100){
 		bldgColor.push(color(random(100, 175)));
 		bldgX.push(x);
@@ -40,18 +57,26 @@ function setup()
 	for(var y = 0; y < 33; y++){
 		lightsOn.push(random(2));
 	}
-	
 }
 
-//functions for Sorcerer Drawing
-function feet(){
+//Draw Sorcerer
+function feet(b){
+	if (sorcererStart % 20 == 0){
+		if (step == 75){
+			step = 0;
+		}
+		else{
+			step = 75;
+		}
+	}
+
 	push();
 		noStroke();
 		fill(255, 0, 0);
-		rect(0, 105, 50, 30);
+		rect(b + step, 105, 50, 30);
+		rect(b - step, 105, 50, 30);
 	pop();
 }
-
 function basket(){
 	push();
 		noFill();
@@ -66,7 +91,6 @@ function basket(){
 		rect(200, -60, 40, 40, 5);
 	pop();
 }
-
 function head(){
 	push();
 		//Hood
@@ -95,7 +119,6 @@ function head(){
 		triangle(210, -220, 220, -205, 210, -205);
 	pop();
 }
-
 function sorciere(x, y, z, r){
 
 	translate(x, y);
@@ -116,11 +139,8 @@ function sorciere(x, y, z, r){
 			quad(0, 80, indWidth / 2, 0, indWidth / 2, 105, 0, 110);
 
 			//feet
-			feet();
-
 			push();
-				translate(150, 0);
-				feet();
+				feet(sorcererFeet);
 			pop();
 
 			//Top half of body
@@ -164,36 +184,8 @@ function sorciere(x, y, z, r){
 	pop();
 }
 
-// fucntion for Kid 
-function drawTree(x, y,scalezz){
-	push();
-		noStroke();
-		fill(40,26,13); //Tree Brown
-		scale(scalezz);
-		translate(x/scalezz,y/scalezz);
-		rect(0,0,30,250,20)
-		push();
-		//left side branches
-			rotate(3*PI/4);
-			rect(-10,-20,20,100,20);
-			rect(-60,-15,15,40,20);
-			rect(-18,85,15,40,20);
-			rotate(PI/6);
-			rect(27,50,15,80,15);
-			rect(-110,50,15,80,15);
-		pop();
-		push();
-		//right side branches
-			rotate(-3*PI/4);
-			rect(-30,0,20,100,20);
-			rect(-25,95,15,60,20);
-			rect(90,10,15,60,20);
-			rotate(-PI/6);
-			rect(-70,60,15,80,15);
-		pop();
-	pop();
-}
 
+//Draw Kid
 function drawKid(x,y,scalez){
 	push();
 		noStroke();
@@ -209,7 +201,6 @@ function drawKid(x,y,scalez){
 		hands();
 	pop();
 }
-
 function legs(){
 	if (start % 20 == 0){
 		if (distance == 15){
@@ -229,7 +220,6 @@ function legs(){
 		rect(10,75,10,25,5);  
 	pop();          // right leg
 }
-
 function hands(){
 	fill(230,110,118);
 	push();
@@ -237,7 +227,9 @@ function hands(){
 		ellipse(-5,60,10,10); 
 	pop();
 }
-// functions for Eric's background
+
+
+//Scene 1
 function cloud(x, y, s){
 	push();
 	 translate(x, y);
@@ -390,7 +382,6 @@ function drawForeGround(){
 	fill(0, 35, 0);
 	rect(0, 280, indWidth, 120);
 }
-
 function scene1(){
 	drawPinkBackGround();
 	drawClouds();
@@ -398,6 +389,7 @@ function scene1(){
 	drawForeGround();
 }
 
+//Scene 2
 function buildings(x, bldgColor){
 	push();
 	//console.log(bldgW + " " + k);
@@ -432,7 +424,7 @@ function scene2(){
 			buildings(bldgX[i], bldgColor[i]);
 		pop();
 	}
-	
+		
 	fill(125);
 	rect(100, 300, 25, 100);
 	rect(200, 300, 25, 100);
@@ -440,28 +432,118 @@ function scene2(){
 	rect(0, 275, 400, 40);
 }
 
+//Portal Animation
+function portal(size){
+	translate(90, 250)
+	fill(0);
+	scale(size);
+	ellipse(0, 0, 100, 250);
+}
+
+//Text boxes
+function text1(){
+	fill(255);
+	ellipse(150, 180, 125, 50);
+	fill(0);
+	text('Hi!  I\'m Kyle', 110, 180); // note \
+}
+function text2(){
+	fill(255);
+	ellipse(150, 180, 125, 50);
+	fill(0);
+	text('Who are you?', 110, 180); // note \
+}
+function text3(){
+	fill(255);
+	ellipse(110, 177, 125, 50);
+	fill(0);
+	text('I am the sorcerer', 60, 180); // note \
+}
+function text4(){
+	fill(255);
+	ellipse(120, 180, 200, 50);
+	fill(0);
+	text('Come with me to the future', 40, 183); // note \
+}
+function text5(){
+	fill(255);
+	ellipse(start - 40, 130, 100, 50);
+	fill(0);
+	text('Woah!', start - 60 , 130); // note \
+}
+
 
 function draw() 
 {
-	var count = 1;
-	count++;
-	console.log(count);
+
 	background(255);
 
+	//Draw Scenes
 	if(scene == 1){
 		scene1();
 	}
 	else if(scene == 2){
 		scene2();
 	}
-	drawKid(start, kidY, 1);
-	//sorciere(100,200,0.25,0);
-	if(start < 350){
+
+
+	//Draw figures
+	push();
+		drawKid(start, kidY, 1);
+		sorciere(sorcererStart,sorcererY,0.3,0);
+	pop();
+
+	//Start walking animations
+	if(start > 130 && scene == 1){
+		start--;
+	}
+	else if(scene == 2){
 		start++;
+		sorcererStart++;
+
+		if(start > 430 && sorcererStart > 430){
+			start = -30;
+			sorcererStart = -160;
+			
+			//Reset scene 2 background
+			bldgColor = [];
+ 			bldgX = [];
+ 			bldgY = [];
+			lightsOn = [];
+			bldgArrays();
+		}
+		text5();
 	}
 	else{
-		scene = 2;
-		start = 0;
-		kidY -= 50;
+		if(count >= 0 && count < 100){
+			text1();
+		}
+		else if(count >= 100 && count < 250){
+			text2();
+		}
+		else if( count >= 250 && count < 400){
+			text3();
+		}
+		else if(count >= 400 && count < 550){
+			text4();
+		}
+		else{
+			if(count < 1000){
+				push();
+					portal(count/1000);
+				pop();
+
+				drawKid(start, kidY, 1);
+				sorciere(sorcererStart,sorcererY,0.3,0);
+			}
+			else{
+				scene = 2;
+				start = -30;
+				sorcererStart = -160;
+				kidY = 200;
+				sorcererY = 250;
+			}
+		}
+		count++;
 	}
 }
