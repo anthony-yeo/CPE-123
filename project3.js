@@ -1,5 +1,7 @@
 //global variables
 
+var start = -30;
+
 var indWidth; // individual width for each drawing
 // x,y,scale, and rotation variables for the Sorcerer
 var xTransSor;
@@ -10,10 +12,35 @@ var rot;
 // variable for the person in the middle
 var personMove;
 
+var scene;
+
+var bldgColor = [];
+var bldgX = [];
+var bldgY = [];
+var lightsOn = [];
+
+var distance;
+var kidY;
 function setup() 
 {	
 	createCanvas(400, 400);
+	scene = 1;
+	distance = 15;
+	kidY = 250;
+
 	indWidth=400;
+
+	//scene 2
+	for(var x = 0; x < 400; x += 100){
+		bldgColor.push(color(random(100, 175)));
+		bldgX.push(x);
+		bldgY.push(random(100));
+
+	}
+	for(var y = 0; y < 33; y++){
+		lightsOn.push(random(2));
+	}
+	
 }
 
 //functions for Sorcerer Drawing
@@ -172,19 +199,44 @@ function drawKid(x,y,scalez){
 		noStroke();
 		scale(scalez);
 		translate(x/scalez,y/scalez);
-		fill(230,110,118);   // red color
+		fill(200,110,118);   // red color
 		ellipse(0,0,40,40); //face
 		fill(80,160,230);   // light blue color
 		quad(-20,-10,-10,-40,10,-40,20,-10); // top hat
 		fill(22,52,230);    // darker blue
 		quad(-10,20,-25,80,25,80,10,20); // body
-		rect(-20,75,10,25,5);            // left leg
-		rect(10,75,10,25,5);             // right leg
-		fill(230,110,118);               // red color
-		ellipse(-5,60,10,10);    // hand
+		legs();
+		hands();
 	pop();
 }
 
+function legs(){
+	if (start % 20 == 0){
+		if (distance == 15){
+			distance = 0;
+		}
+		else{
+			distance = 15;
+		}
+	}
+
+	push();
+		translate(distance,0);
+		rect(-20,75,10,25,5);   // left leg
+	pop();  
+	push();    
+		translate(-(distance),0);
+		rect(10,75,10,25,5);  
+	pop();          // right leg
+}
+
+function hands(){
+	fill(230,110,118);
+	push();
+		translate(distance, 0);
+		ellipse(-5,60,10,10); 
+	pop();
+}
 // functions for Eric's background
 function cloud(x, y, s){
 	push();
@@ -339,10 +391,77 @@ function drawForeGround(){
 	rect(0, 280, indWidth, 120);
 }
 
+function scene1(){
+	drawPinkBackGround();
+	drawClouds();
+	drawGoodTrees();
+	drawForeGround();
+}
+
+function buildings(x, bldgColor){
+	push();
+	//console.log(bldgW + " " + k);
+
+	fill(bldgColor);
+	rect(x, 500, 100, -450);
+
+	var index = 0;
+
+	for(var i = 0; i < 11 ; i++){
+		for(var j = 0; j < 3; j++){
+
+			if(lightsOn[index] > 1){
+				fill(255, 255, 0);
+			}
+			else{
+				fill(0);
+			}
+
+			index++;
+			rect(j * 30 + 10 + x, 360 - i * 30, 20);
+		}
+	}
+	pop();
+}
+
+function scene2(){
+	background(0);
+	for(var i = 0; i < bldgX.length; i++){
+		push();
+			translate(0, bldgY[i]);
+			buildings(bldgX[i], bldgColor[i]);
+		pop();
+	}
+	
+	fill(125);
+	rect(100, 300, 25, 100);
+	rect(200, 300, 25, 100);
+	rect(300, 300, 25, 100);
+	rect(0, 275, 400, 40);
+}
+
 
 function draw() 
 {
+	var count = 1;
+	count++;
+	console.log(count);
 	background(255);
-	//drawKid(200,200,0.5);
+
+	if(scene == 1){
+		scene1();
+	}
+	else if(scene == 2){
+		scene2();
+	}
+	drawKid(start, kidY, 1);
 	//sorciere(100,200,0.25,0);
+	if(start < 350){
+		start++;
+	}
+	else{
+		scene = 2;
+		start = 0;
+		kidY -= 50;
+	}
 }
